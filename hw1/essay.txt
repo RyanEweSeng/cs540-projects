@@ -1,0 +1,35 @@
+Challenge 1 Point in the Stanford 100 Year Study (545 words)
+
+Narrow AI is a More Useful and Reasonable Form of AI
+
+With the rise in the usage of AI, companies have been exploring the usage of a more abstract AI that could do more general tasks that
+humans complete. As a result, companies are pushing towards the improvement of general AI that can be used in various scenarios;
+similar to simulating how the human brain functions. The Stanford 100 Year Study states that there has been more desire for general
+but I argue that general AI is beyond the reach with the current technology we have and that narrow AI is more practical for human
+usage.
+
+Narrow AI are simply easier to implement due to the fact that the task they are accomplishing is usually structured and well defined.
+The key difference between narrow AI and general AI is that the goal of narrow AI is to mimic human behavior when doing detailed
+tasks. This means that narrow AI is able to enhance the jobs of people by reducing the work needed for mundane and repetitive tasks.
+Similar to how we use robots in factories to package goods. Unlike general AI, which serves to replace humans for jobs that require
+more common sense such as customer service systems. Tasks like these require more thought and the human brain is no easy device to
+replicate. Davidson (2019) claims that scientists were table to replicate a flatworm brain which only consisted of 302 neurons; the
+human brain has an estimated 100 billion neurons. This illustrates the scale of what we are trying to replicate. There is also so
+much more to a brain than intelligence. Davidson quotes Dr Berlin, stating that subjective and conscious experience are part of
+having consciousness. Narrow AI has shown that we can achieve the raw intelligence for certain tasks but how will we deal with tasks
+that require other forms of intellect.
+
+The rise of general AI is only recent, meaning that it is still in its early stages. In an article by Larkin (2022), she quotes Dr
+Goertzel, the CEO of SingularityNET, who states that the biggest issues lies in sufficient funding for the research and development
+of general AI. He further argues that the way narrow AI is implemented contradicts the requirements for general AI, that is, the
+adaptability of general AI. Narrow AI is usually coded in a rigid manner that prevents it from being adaptive. In essence, the
+amount of money pooled to develop general AI may be pointless and it is something only available in the distant future. The current
+usage of AI in the industry is still oriented on structure tasks which may hinder the implementation of a technology that is highly
+adaptive.
+
+In conclusion, I believe that general AI is still in its early stages and is not something that is attainable in the near future.
+The funding and effort put into it is not as beneficial as focusing on narrow AI that has a greater impact and more practical use
+cases. The human brain that general AI tries to simulate is simply too complicated and advanced to be accomplished with the
+technology we have today. There is so much more to intelligent thinking than just pure intelligence; the individual would need to
+be subjective and have consciousness to take on tasks such as customer support.
+

@@ -1,0 +1,4 @@
+References
+1. Larkin, Z. 2022. General AI vs Narrow AI. Levity. Retrieved at https://levity.ai/blog/general-ai-vs-narrow-ai
+2. Davidson, L. 2019. Narrow vs. General AI: What's Next for Artificial Intelligence. Springboard. Retrieved from https://www.springboard.com/blog/data-science/narrow-vs-general-ai/
+3. Kanade, V. 2022. What is Narrow Articial Intelligence. Spiceworks. Retrieved from https://www.spiceworks.com/tech/artificial-intelligence/articles/what-is-narrow-ai/#:~:text=Artificial%20narrow%20intelligence%20systems%20facilitate,improve%20the%20quality%20of%20life.
