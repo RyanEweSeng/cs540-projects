@@ -87,17 +87,17 @@ def main():
 
     print('Q1')
     for i in range(26):
-        print(chr(i + 65), ' ', X[i])
+        print(chr(i + 65),X[i])
 
     print('Q2')
-    print(f'{val_e: .4f}')
-    print(f'{val_s: .4f}')
+    print(f'{val_e:.4f}')
+    print(f'{val_s:.4f}')
 
     print('Q3')
-    print(f'{bigF_e: .4f}')
-    print(f'{bigF_s: .4f}')
+    print(f'{bigF_e:.4f}')
+    print(f'{bigF_s:.4f}')
 
     print('Q4')
-    print(f'{prob_english_given_txt: .4f}')
+    print(f'{prob_english_given_txt:.4f}')
 
 main()
