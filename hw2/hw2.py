@@ -1,7 +1,6 @@
 import sys
 import math
 
-
 def get_parameter_vectors():
     '''
     This function parses e.txt and s.txt to get the 26-dimensional multinomial
@@ -35,24 +34,70 @@ def get_parameter_vectors():
     return (e,s)
 
 def shred(filename):
-    #Using a dictionary here. You may change this to any data structure of
-    #your choice such as lists (X=[]) etc. for the assignment
     X=[]
     for i in range(26):
         X.insert(i, 0)
     
     with open (filename,encoding='utf-8') as f:
         for line in f:
-            line = line.upper().strip()
-            for char in line:
+            for char in line.upper().strip():
                 if char.isalpha():
                     X[ord(char) - 65] = X[ord(char) - 65] + 1
+
+    return X
+
+def compute(X, p, i):
+    return X[i] * math.log(p[i])
+
+def big_func(language, X, p):
+    prob = 0
+    if language == 'e':
+        prob = 0.6
+    elif language == 's':
+        prob = 0.4
+
+    sum = 0
+    for i in range(26):
+        sum += compute(X, p, i)
+    
+    return math.log(prob) + sum
+
+def final_func(bigF_e, bigF_s):
+    delta = bigF_s - bigF_e
+
+    if delta >= 100:
+        return 0
+    elif delta <= -100:
+        return 1
+    else:
+        return 1 / (1 + math.exp(delta))
+
+def main():
+    vectors = get_parameter_vectors()
+
+    X = shred('letter.txt')
+
+    val_e = compute(X, vectors[0], 0)
+    val_s = compute(X, vectors[1], 0)
+
+    bigF_e = big_func('e', X, vectors[0])
+    bigF_s = big_func('s', X, vectors[1])
+
+    prob_english_given_txt = final_func(bigF_e, bigF_s)
 
     print('Q1')
     for i in range(26):
         print(chr(i + 65), ' ', X[i])
 
-# TODO: add your code here for the assignment
-# You are free to implement it as you wish!
-# Happy Coding!
-shred('letter.txt')
+    print('Q2')
+    print(f'{val_e: .4f}')
+    print(f'{val_s: .4f}')
+
+    print('Q3')
+    print(f'{bigF_e: .4f}')
+    print(f'{bigF_s: .4f}')
+
+    print('Q4')
+    print(f'{prob_english_given_txt: .4f}')
+
+main()
