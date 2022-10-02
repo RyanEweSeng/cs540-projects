@@ -2,9 +2,6 @@ from scipy.linalg import eigh
 import numpy as np
 import matplotlib.pyplot as plt
 
-n = 2414 # number of images
-d = 1024 # dimension of an image 32x32
-
 def load_and_center_dataset(filename):
     # load the dataset from the .npy file
     dataset = np.load(filename)
@@ -17,6 +14,7 @@ def load_and_center_dataset(filename):
 
 def get_covariance(dataset):
     # calculate the covariance matrix of the dataset
+    n = 2414 # number of images
     transposed_dataset = np.transpose(dataset)
     dot_prod = np.dot(transposed_dataset, dataset)
     cov_mat = dot_prod / (n-1)
