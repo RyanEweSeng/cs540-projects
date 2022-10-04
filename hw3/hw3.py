@@ -67,6 +67,10 @@ def display_image(orig, proj):
     orig_plot = np.reshape(orig, [32, 32])
     proj_plot = np.reshape(proj, [32, 32])
 
+    # tranpose the images
+    orig_plot = np.transpose(orig_plot)
+    proj_plot = np.transpose(proj_plot)
+
     # create a figure w/ one row of two subplots
     fig, (subplot1, subplot2) = plt.subplots(nrows=1, ncols=2, figsize=(20,10))
 
@@ -83,10 +87,9 @@ def display_image(orig, proj):
     fig.colorbar(val2, ax=subplot2)
     plt.show()
 
-x = load_and_center_dataset("YaleB_32x32.npy")
-S = get_covariance(x)
-Lambda, U = get_eig(S, 2)
-Lambda_prop, U_prop = get_eig_prop(S, 0.07)
-projection = project_image(x[0], U)
-display_image(x[0], projection)
-
+# x = load_and_center_dataset("YaleB_32x32.npy")
+# S = get_covariance(x)
+# Lambda, U = get_eig(S, 2)
+# Lambda_prop, U_prop = get_eig_prop(S, 0.07)
+# projection = project_image(x[0], U)
+# display_image(x[0], projection)
