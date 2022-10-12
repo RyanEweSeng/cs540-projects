@@ -1,6 +1,7 @@
 import csv
 import numpy as np
-from scipy.cluster.hierarchy import linkage
+from matplotlib import pyplot as plt
+from scipy.cluster.hierarchy import dendrogram, linkage
 
 np.set_printoptions(suppress='True')
 
@@ -63,13 +64,17 @@ def hac(features):
                     idx2 = cluster_list[j][0]
                     complete_linkage_dist = dist
                 elif dist == complete_linkage_dist:
-                    if cluster_list[i][0] < idx1 or cluster_list[j][0] < idx2:
+                    if cluster_list[i][0] < idx1:
                         idx1 = cluster_list[i][0]
                         idx2 = cluster_list[j][0]
                         complete_linkage_dist = dist
-                    else:
                         continue
-
+                    elif cluster_list[i][0] == idx1:
+                        if cluster_list[j][0] < idx2:
+                            idx1 = cluster_list[i][0]
+                            idx2 = cluster_list[j][0]
+                            complete_linkage_dist = dist
+                            continue
 
         # merge the two chosen clusters
         cluster1 = helper_search_cluster(cluster_list, idx1)
@@ -119,7 +124,14 @@ def helper_delete_cluster(clusters, idx):
             break
 
 def imshow_haz(Z):
-    pass 
+    plt.figure(figsize=(15,10))
+    dendrogram(
+        Z,
+        leaf_rotation=90.,
+        leaf_font_size=8.,
+        color_threshold=.6
+    )
+    plt.show()
 
 if __name__ == "__main__":
     data = load_data("Pokemon.csv")
@@ -145,6 +157,7 @@ if __name__ == "__main__":
     print("array element type: ",type(out_Z[0][0])) # expect float
     print()
 
-    out_hac = linkage(features)
+    #    imshow_haz(out_Z)
+    out_hac = linkage(features, method='complete')
     print(out_hac)
 
