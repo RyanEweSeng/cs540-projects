@@ -119,7 +119,7 @@ def helper_delete_cluster(clusters, idx):
             break
 
 def imshow_haz(Z):
-    pass
+    pass 
 
 if __name__ == "__main__":
     data = load_data("Pokemon.csv")
