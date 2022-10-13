@@ -102,12 +102,12 @@ def hac(features):
     return np.array(Z, dtype=np.float64)
 
 def calc_dist_from_norm(c1, c2):
-    d = np.inf
+    d = -1
     for p1 in c1:
         for p2 in c2:
-            curr_d = np.linalg.norm(p1 - p2)
-            if curr_d < d: d = curr_d
-
+            euclid_d = np.linalg.norm(p1 - p2)
+            if euclid_d > d: d = euclid_d
+    
     return d
 
 def helper_search_cluster(clusters, idx):
@@ -129,35 +129,34 @@ def imshow_haz(Z):
         Z,
         leaf_rotation=90.,
         leaf_font_size=8.,
-        color_threshold=.6
+        color_threshold=None
     )
     plt.show()
 
 if __name__ == "__main__":
     data = load_data("Pokemon.csv")
-    print(data)
-    print("return type: ",type(data)) # expect list
-    print("list element type: ", type(data[0])) # expect dict
-    print()
+    # print(data)
+    # print("return type: ",type(data)) # expect list
+    # print("list element type: ", type(data[0])) # expect dict
+    # print()
 
     feature = calc_features(data[0])
-    print(feature)
-    print("return type: ",type(feature)) # expect numpy array
-    print("array shape: ",feature.shape) # expect (6,0)
-    print("array element type: ",type(feature[0])) # expect int64
-    print()
+    # print(feature)
+    # print("return type: ",type(feature)) # expect numpy array
+    # print("array shape: ",feature.shape) # expect (6,0)
+    # print("array element type: ",type(feature[0])) # expect int64
+    # print()
 
     features = []
     for i in range(100):
         features.append(calc_features(data[i]))
     out_Z = hac(features)
     print(out_Z)
-    print("return type: ",type(out_Z)) # expect numpy array
-    print("array shape: ",out_Z.shape) # expect (n-1, 4)
-    print("array element type: ",type(out_Z[0][0])) # expect float
+    # print("return type: ",type(out_Z)) # expect numpy array
+    # print("array shape: ",out_Z.shape) # expect (n-1, 4)
+    # print("array element type: ",type(out_Z[0][0])) # expect float
     print()
 
-    #    imshow_haz(out_Z)
     out_hac = linkage(features, method='complete')
     print(out_hac)
 
