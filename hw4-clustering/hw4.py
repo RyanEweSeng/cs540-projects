@@ -133,30 +133,33 @@ def imshow_haz(Z):
     )
     plt.show()
 
-if __name__ == "__main__":
-    data = load_data("Pokemon.csv")
+# if __name__ == "__main__":
+    # data = load_data("Pokemon.csv")
     # print(data)
     # print("return type: ",type(data)) # expect list
     # print("list element type: ", type(data[0])) # expect dict
     # print()
 
-    feature = calc_features(data[0])
+    # feature = calc_features(data[0])
     # print(feature)
     # print("return type: ",type(feature)) # expect numpy array
     # print("array shape: ",feature.shape) # expect (6,0)
     # print("array element type: ",type(feature[0])) # expect int64
     # print()
 
-    features = []
-    for i in range(100):
-        features.append(calc_features(data[i]))
-    out_Z = hac(features)
-    print(out_Z)
+    # features = []
+    # N = 30
+    # for i in range(N):
+    #    features.append(calc_features(data[i]))
+    # out_Z = hac(features)
+    # print(out_Z)
     # print("return type: ",type(out_Z)) # expect numpy array
     # print("array shape: ",out_Z.shape) # expect (n-1, 4)
     # print("array element type: ",type(out_Z[0][0])) # expect float
-    print()
+    # print()
 
-    out_hac = linkage(features, method='complete')
-    print(out_hac)
+    # out_hac = linkage(features, method='complete')
+    # print(out_hac)
+
+    # imshow_haz(out_Z)
 
