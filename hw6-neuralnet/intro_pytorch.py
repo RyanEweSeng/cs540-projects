@@ -72,9 +72,6 @@ def train_model(model, train_loader, criterion, T):
 def evaluate_model(model, test_loader, criterion, show_loss = True):
     model.eval()
 
-    eloss = []
-    eval_acc = []
-
     running_loss = 0.0
     num_correct = 0
     total = 0
@@ -127,4 +124,3 @@ if __name__ == '__main__':
     
     # pred_set, _ = next(iter(test_loader))
     # predict_label(model, pred_set, 1)
-
