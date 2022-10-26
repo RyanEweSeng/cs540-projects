@@ -8,87 +8,123 @@ from torchvision import datasets, transforms
 # Feel free to import other packages, if needed.
 # As long as they are supported by CSL machines.
 
-
 def get_data_loader(training = True):
-    """
-    TODO: implement this function.
-
-    INPUT: 
-        An optional boolean argument (default value is True for training dataset)
-
-    RETURNS:
-        Dataloader for the training set (if training = True) or the test set (if training = False)
-    """
-    transform=transforms.Compose([
+    custom_transform = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize((0.1307,), (0.3081,))
-        ])
+    ])
 
+    train_set = datasets.FashionMNIST('./data', train=True, download=True, transform=custom_transform)
+    test_set = datasets.FashionMNIST('./data', train=False, transform=custom_transform)
 
+    loader = torch.utils.data.DataLoader(train_set, batch_size=64)
+    if not training:
+        loader = torch.utils.data.DataLoader(test_set, batch_size=64)
+    
+    return loader
 
 def build_model():
-    """
-    TODO: implement this function.
+    # a flatten layer to convert 2D array to 1D array
+    # a dense layer with 128 nodes and a ReLU activation
+    # a dense layer with 64 nodes and a ReLU activation
+    # a dense layer with 10 nodes
 
-    INPUT: 
-        None
+    model = nn.Sequential(
+        nn.Flatten(),
+        nn.Linear(784, 128),
+        nn.ReLU(),
+        nn.Linear(128, 64),
+        nn.ReLU(),
+        nn.Linear(64, 10)
+    )
 
-    RETURNS:
-        An untrained neural network model
-    """
-
-
-
+    return model
 
 def train_model(model, train_loader, criterion, T):
-    """
-    TODO: implement this function.
+    opt = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
+   
+    for epoch in range(T):
+        running_loss = 0.0
+        num_correct = 0
+        total = 0
 
-    INPUT: 
-        model - the model produced by the previous function
-        train_loader  - the train DataLoader produced by the first function
-        criterion   - cross-entropy 
-        T - number of epochs for training
+        model.train()
+        
+        for i, data in enumerate(train_loader, 0):
+            inputs, labels = data
 
-    RETURNS:
-        None
-    """
-    
+            opt.zero_grad()
 
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            opt.step()
+                
+            running_loss += loss.item() * 64
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            num_correct += (predicted == labels).sum().item()
+
+        acc = 100 * num_correct / total
+        loss = running_loss / total
+        print(f'Train Epoch: {epoch} Accuracy: {num_correct}/{total}({acc:.2f}%) Loss: {loss:.3f}')
 
 def evaluate_model(model, test_loader, criterion, show_loss = True):
-    """
-    TODO: implement this function.
+    model.eval()
 
-    INPUT: 
-        model - the the trained model produced by the previous function
-        test_loader    - the test DataLoader
-        criterion   - cropy-entropy 
+    eloss = []
+    eval_acc = []
 
-    RETURNS:
-        None
-    """
+    running_loss = 0.0
+    num_correct = 0
+    total = 0
+
+    with torch.no_grad():
+        for data, labels in test_loader:
+            outputs = model(data)
+            loss = criterion(outputs, labels)
+            
+            running_loss += loss.item() * 64
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            num_correct += (predicted == labels).sum().item()
+
+    loss = running_loss / total
+    acc = 100 * num_correct / total
+
+    if show_loss:
+        print(f'Average loss: {loss:.4f}')
     
-
+    print(f'Accuracy: {acc:.2f}%')
 
 def predict_label(model, test_images, index):
-    """
-    TODO: implement this function.
+    class_names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat', 'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle Boot']
+    
+    logits = model(test_images)
+    probs = F.softmax(logits, dim=1)
+    
+    top3_prob = torch.topk(probs[index], 3)[0]
+    top3_prob = top3_prob.detach().numpy()
 
-    INPUT: 
-        model - the trained model
-        test_images   -  test image set of shape Nx1x28x28
-        index   -  specific index  i of the image to be tested: 0 <= i <= N - 1
+    top3_idx = torch.topk(probs[index], 3)
+    top3_idx = top3_idx.indices.detach().numpy()
 
-
-    RETURNS:
-        None
-    """
+    for i in range(3): 
+        print(f'{class_names[top3_idx[i]]}: {top3_prob[i] * 100:.2f}%')
 
 
 if __name__ == '__main__':
-    '''
-    Feel free to write your own test code here to exaime the correctness of your functions. 
-    Note that this part will not be graded.
-    '''
+    # train_loader = get_data_loader()
+    # test_loader = get_data_loader(training=False)
+    
+    # model = build_model()
+    
     criterion = nn.CrossEntropyLoss()
+    
+    # train_model(model, train_loader, criterion, 5)
+    
+    # evaluate_model(model, test_loader, criterion, show_loss = True)
+    
+    # pred_set, _ = next(iter(test_loader))
+    # predict_label(model, pred_set, 1)
+
