@@ -15,11 +15,41 @@ import torchvision.transforms as transforms
 class LeNet(nn.Module):
     def __init__(self, input_shape=(32, 32), num_classes=100):
         super(LeNet, self).__init__()
-        # certain definitions
+
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=6, kernel_size=5, stride=1, bias=True)
+        self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)
+        self.conv2 = nn.Conv2d(in_channels=6, out_channels=16, kernel_size=5, stride=1, padding=0, bias=True)
+        self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)
+
+        self.linear1 = nn.Linear(16*5*5, 256, bias=True)
+        self.linear2 = nn.Linear(256, 128, bias=True)
+        self.linear3 = nn.Linear(128, 100, bias=True)
 
     def forward(self, x):
         shape_dict = {}
-        # certain operations
+    
+        x = nn.functional.relu(self.conv1(x))
+        x = self.pool1(x)
+        shape_dict[1] = list(x.size())
+
+        x = nn.functional.relu(self.conv2(x))
+        x = self.pool2(x)
+        shape_dict[2] = list(x.size())
+
+        x = x.view(-1, 16*5*5)
+        shape_dict[3] = list(x.size())
+
+        x = nn.functional.relu(self.linear1(x))
+        shape_dict[4] = list(x.size())
+
+        x = nn.functional.relu(self.linear2(x))
+        shape_dict[5] = list(x.size())
+
+        x = self.linear3(x)
+        shape_dict[6] = list(x.size())
+
+        out = x
+
         return out, shape_dict
 
 
@@ -29,6 +59,11 @@ def count_model_params():
     '''
     model = LeNet()
     model_params = 0.0
+    
+    for _, param in model.named_parameters():
+        model_params += torch.prod(torch.tensor(param.size()))
+
+    model_params = model_params.item() / 1e6
 
     return model_params
 
