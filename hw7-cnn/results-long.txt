@@ -1,0 +1,8 @@
+default config		: 16.59
+batch size 8		: 17.84
+batch size 16		: 18.32
+learning rate 0.05	: 4.98
+learning rate 0.01	: 14.21
+epochs 20		: 18.65
+epochs 5		: 13.90
+
