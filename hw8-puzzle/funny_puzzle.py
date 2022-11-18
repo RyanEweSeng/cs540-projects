@@ -28,8 +28,6 @@ def get_manhattan_distance(from_state, to_state=[1, 2, 3, 4, 5, 6, 7, 0, 0]):
 
 def print_succ(state):
     """
-    TODO: This is based on get_succ function below, so should implement that function.
-
     INPUT: 
         A state (list of length 9)
 
