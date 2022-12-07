@@ -42,10 +42,21 @@ if __name__ == "__main__":
         # TODO: Replace the following with Q-Learning
 
         while (not done):
+            if random.uniform(0, 1) > EPSILON:
+                pred = np.array([Q_table[(obs, i)] for i in range(env.action_space.n)])
+                action = np.argmax(pred)
+            else:
+                action = env.action_space.sample()
+            
+            next_state, reward, done, info = env.step(action)
+            next_pred = np.array([Q_table[(next_state, i)] for i in range(env.action_space.n)])
 
-            action = env.action_space.sample() # currently only performs a random action.
-            obs,reward,done,info = env.step(action)
-            episode_reward += reward # update episode reward
+            value = np.amax(next_prediction)
+            Q_table[(obs, action)] = (1 - LEARNING_RATE) * Q_table[(obs, action)] + LEARNING_RATE * (reward + DISCOUNT_FACTOR * value)
+            obs = next_state
+            episode_reward += reward
+
+        EPSILON = EPSILON * EPSILON_DECAY
 
         # END of TODO
         # YOU DO NOT NEED TO CHANGE ANYTHING BELOW THIS LINE
