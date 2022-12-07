@@ -48,8 +48,8 @@ class TeekoPlayer:
         possible_move = None
         possible_old = None
         
-        local_time = time.ctime(time.time())
-        print("Start time:", local_time)
+        # local_time = time.ctime(time.time())
+        # print("Start time:", local_time)
 
         successors = self.succ(state, self.my_piece)
         for succ in successors:
@@ -76,8 +76,9 @@ class TeekoPlayer:
         else:
             move.append(possible_move)
 
-        local_time = time.ctime(time.time())
-        print("End time:", local_time)
+        # local_time = time.ctime(time.time())
+        # print("End time:", local_time)
+
         return move
 
 
