@@ -1,5 +1,6 @@
 import random
-
+import copy
+import time
 
 class TeekoPlayer:
     """ An object representation for an AI game player for the game Teeko.
@@ -13,6 +14,8 @@ class TeekoPlayer:
         """
         self.my_piece = random.choice(self.pieces)
         self.opp = self.pieces[0] if self.my_piece == self.pieces[1] else self.pieces[1]
+        self.depth_limit = 2
+
 
     def make_move(self, state):
         """ Selects a (row, col) space for the next move. You may assume that whenever
@@ -40,27 +43,102 @@ class TeekoPlayer:
             and will eventually take over the board. This is not a valid strategy and
             will earn you no points.
         """
-
-        drop_phase = True  # TODO: detect drop phase
-
-        if not drop_phase:
-            # TODO: choose a piece to move and remove it from the board
-            # (You may move this condition anywhere, just be sure to handle it)
-            #
-            # Until this part is implemented and the move list is updated
-            # accordingly, the AI will not follow the rules after the drop phase!
-            pass
-
-        # select an unoccupied space randomly
-        # TODO: implement a minimax algorithm to play better
+        score = float("-inf")
         move = []
-        (row, col) = (random.randint(0, 4), random.randint(0, 4))
-        while not state[row][col] == ' ':
-            (row, col) = (random.randint(0, 4), random.randint(0, 4))
+        possible_move = None
+        possible_old = None
+        
+        local_time = time.ctime(time.time())
+        print("Start time:", local_time)
 
-        # ensure the destination (row,col) tuple is at the beginning of the move list
-        move.insert(0, (row, col))
+        successors = self.succ(state, self.my_piece)
+        for succ in successors:
+            drop_phase = self.get_drop_phase(state)
+            state_copy = copy.deepcopy(state)
+
+            if drop_phase:
+                state_copy[succ[0]][succ[1]] = self.my_piece
+            else:
+                state_copy[succ[0]][succ[1]] = ' '
+                state_copy[succ[2]][succ[3]] = self.my_piece
+
+            possible_score = self.max_value(state_copy, 0, float("-inf"), float("inf"))
+
+            if possible_score > score:
+                score = possible_score
+                possible_move = (succ[2], succ[3])
+                if not drop_phase:
+                    possible_old = (succ[0], succ[1])
+
+        if possible_old is not None:
+            move.append(possible_move)
+            move.append(possible_old)
+        else:
+            move.append(possible_move)
+
+        local_time = time.ctime(time.time())
+        print("End time:", local_time)
         return move
+
+
+    def succ(self, state, teamcolor):
+        # successors are in the form:
+        #     (old_r, old_c, new_r, new_c) where new is the piece to place/move to 
+        successors = []
+        drop_phase = self.get_drop_phase(state)
+        
+        if drop_phase:
+           # any empty cell is a possible location for a piece which is a successor
+           for r in range(5):
+               for c in range(5):
+                   if state[r][c] == ' ':
+                       successors.append([r, c, r, c])
+        else:
+            # look for the cells with pieces and check the adjacent moves
+            for r in range(5):
+                for c in range(5):
+                    if state[r][c] == teamcolor:
+                        moves = self.get_adj_moves(state, r, c)
+                        for move in moves:
+                            successors.append([r, c, move[0], move[1]])
+
+        return successors
+
+
+    def get_adj_moves(self, state, row, col):
+        dim = 5
+        moves = []
+
+        if row + 1 < dim and state[row+1][col] == ' ': # DOWN
+            moves.append((row+1, col))
+        if row - 1 >= 0 and state[row-1][col] == ' ': # UP
+            moves.append((row-1, col))
+        if col + 1 < dim and state[row][col+1] == ' ': # RIGHT
+            moves.append((row, col+1))
+        if col - 1 >= 0 and state[row][col-1] == ' ': # LEFT
+            moves.append((row, col-1))
+
+        if row - 1 >= 0 and col - 1 >= 0 and state[row-1][col-1] == ' ': # TOP-LEFT
+            moves.append((row-1, col-1))
+        if row - 1 >= 0 and col + 1 < dim and state[row-1][col+1] == ' ': # TOP-RIGHT
+            moves.append((row-1, col+1))
+        if row + 1 < dim and col - 1 >= 0 and state[row+1][col-1] == ' ': # BOT-LEFT
+            moves.append((row+1, col-1))
+        if row + 1 < dim and col + 1 < dim and state[row+1][col+1] == ' ': # BOT-RIGHT
+            moves.append((row+1, col+1))
+
+        return moves
+
+
+    def get_drop_phase(self, state):
+        count = 0
+        for r in range(5):
+            for c in range(5):
+                if state[r][c] != ' ':
+                    count += 1
+
+        return count < 8 
+
 
     def opponent_move(self, move):
         """ Validates the opponent's next move against the internal board representation.
@@ -91,6 +169,7 @@ class TeekoPlayer:
         # make move
         self.place_piece(move, self.opp)
 
+
     def place_piece(self, move, piece):
         """ Modifies the board representation using the specified move and piece
 
@@ -110,6 +189,7 @@ class TeekoPlayer:
             self.board[move[1][0]][move[1][1]] = ' '
         self.board[move[0][0]][move[0][1]] = piece
 
+
     def print_board(self):
         """ Formatted printing for the board """
         for row in range(len(self.board)):
@@ -118,6 +198,7 @@ class TeekoPlayer:
                 line += cell + " "
             print(line)
         print("   A B C D E")
+
 
     def game_value(self, state):
         """ Checks the current board status for a win condition
@@ -128,8 +209,6 @@ class TeekoPlayer:
 
         Returns:
             int: 1 if this TeekoPlayer wins, -1 if the opponent wins, 0 if no winner
-
-        TODO: complete checks for diagonal and box wins
         """
         # check horizontal wins
         for row in state:
@@ -143,11 +222,98 @@ class TeekoPlayer:
                 if state[i][col] != ' ' and state[i][col] == state[i + 1][col] == state[i + 2][col] == state[i + 3][col]:
                     return 1 if state[i][col] == self.my_piece else -1
 
-        # TODO: check \ diagonal wins
-        # TODO: check / diagonal wins
-        # TODO: check box wins
+        # check \ diagonal wins
+        for col in range(2):
+            for i in range(0,2):
+                if state[i][col] != ' ' and state[i][col] == state[i+1][col+1] == state[i+2][col+2] == state[i+3][col+3]:
+                    return 1 if state[i][col] == self.my_piece else -1
+        
+        # check / diagonal wins
+        for col in range(2):
+            for i in range(3,5):
+                if state[i][col] != ' ' and state[i][col] == state[i-1][col+1] == state[i-2][col+2] == state[i-3][col+3]:
+                    return 1 if state[i][col] == self.my_piece else -1
+        
+        # check box wins
+        for row in range(4):
+            for col in range(4):
+                if state[row][col] != ' ' and state[row][col] == state[row+1][col] == state[row][col+1] == state[row+1][col+1]:
+                    return 1 if state[row][col] == self.my_piece else -1
 
         return 0  # no winner yet
+
+
+    def heuristic_game_value(self, state):
+        weight = [
+            [0.05, 0.1, 0.05, 0.1, 0.05],
+            [ 0.1, 0.2,  0.2, 0.2, 0.1],
+            [0.05, 0.2,  0.3, 0.2, 0.05],
+            [ 0.1, 0.2,  0.2, 0.2, 0.1],
+            [0.05, 0.1, 0.05, 0.1, 0.05]
+        ]
+        val = self.game_value(state)
+        
+        if val != 0: # terminal states have non-zero game_value
+            return val
+        
+        player_score = 0
+        opp_score = 0
+        for row in range(5):
+            for col in range(5):
+                if state[row][col] == self.my_piece:
+                    player_score += weight[row][col]
+                elif state[row][col] == self.opp:
+                    opp_score += weight[row][col]
+
+        return player_score - opp_score
+
+
+    def max_value(self, state, depth, alpha, beta):
+        if abs(self.game_value(state)) == 1:
+            return self.game_value(state)
+
+        if depth == self.depth_limit:
+            return self.heuristic_game_value(state)
+
+        successors = self.succ(state, self.my_piece) # get all the possible successors
+        for succ in successors:
+            state_copy = copy.deepcopy(state)
+            if self.get_drop_phase(state):
+                state_copy[succ[0]][succ[1]] = self.my_piece # place piece
+            else:
+                state_copy[succ[0]][succ[1]] = ' '
+                state_copy[succ[2]][succ[3]] = self.my_piece # move exisiting piece
+            
+            alpha = max(alpha, self.min_value(state_copy, depth+1, alpha, beta)) # update the alpha
+
+        if alpha >= beta:
+            return beta
+
+        return alpha
+
+
+    def min_value(self, state, depth, alpha, beta):
+        if abs(self.game_value(state)) == 1:
+            return self.game_value(state)
+
+        if depth == self.depth_limit:
+            return self.heuristic_game_value(state)
+
+        successors = self.succ(state, self.opp) # get all the possible successors
+        for succ in successors:
+            state_copy = copy.deepcopy(state)
+            if self.get_drop_phase(state):
+                state_copy[succ[0]][succ[1]] = self.opp # place piece
+            else:
+                state_copy[succ[0]][succ[1]] = ' '
+                state_copy[succ[2]][succ[3]] = self.opp # move exisiting piece
+            
+            beta = min(beta, self.max_value(state_copy, depth+1, alpha, beta)) # update the alpha
+
+        if beta <= alpha:
+            return alpha
+
+        return beta
 
 
 ############################################################################
